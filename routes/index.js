@@ -11,6 +11,12 @@ router.get('/login', function(req, res, next) {
   res.render('login', { title: 'Login' });
 });
 
+/* Login */ 
+// router.post('/login', (req, res) => {
+router.post('/login', function(req, res, next) {
+  res.redirect('/posts');
+});
+
 /* Posts */
 router.get('/posts', function(req, res, next) {
   res.render('posts', { title: 'Posts' });

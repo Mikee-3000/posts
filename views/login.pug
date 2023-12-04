@@ -1,0 +1,20 @@
+extends layout
+
+block content
+
+    <form action="/login" method="post">
+        <div class="container">
+            <h2>Sign In</h2>
+            <div class="container_row">
+                <label for="uname"><b>Username</b></label>
+                <input type="text" placeholder="Enter Username" name="uname" required minlength="4" oninvalid="this.setCustomValidity('Username must be at least 4 characters long')">
+            </div>
+            <div class="container_row">
+                <label for="psw"><b>Password</b></label>
+                <input type="password" placeholder="Enter Password" name="psw" required minlength="8" oninvalid="this.setCustomValidity('Password must be at least 8 characters long')">
+            </div>
+            <div class="container_row">
+                <button type="submit">Login</button>
+            </div>
+        </div>
+    </form>

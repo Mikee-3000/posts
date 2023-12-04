@@ -38,4 +38,6 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+app.listen(4000, '0.0.0.0');
+
 module.exports = app;
