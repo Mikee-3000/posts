@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var apiRouter = require('./routes/api');
+var session = require('express-session');
 
 // connection to the database
 var DBConnection = require('./db/DBConnection');
@@ -35,12 +36,18 @@ dbConnection.getConnection().exec(`
 // create the admin user if they don't exist
 const UserModel = require('./models/UserModel');
 if (!UserModel.adminExists()) {
-    UserModel.addUserToDB('admin', 'admin', 1);
+    UserModel.addUserToDB('admin', 'admin123', 1);
 } else {
     console.log('Admin already exists');
 }
 
 var app = express();
+
+app.use(session({
+  resave: false, // don't save session if unmodified
+  saveUninitialized: false, // don't create session until something stored
+  secret: 'shhhh, very secret'
+}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

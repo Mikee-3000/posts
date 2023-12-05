@@ -1,23 +1,9 @@
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const DBConnection = require('../db/DBConnection');
+const UserFactory = require('../helper/UserFactory');
 
 class UserModel {
-    constructor(id, name, password, isAdmin) {
-        this.id = id;
-        this.name = name;
-        this.password = password;
-        this.isAdmin = isAdmin;
-    }
-
-    getIsAdmin() {
-        return this.isAdmin;
-    }
-
-    setIsAdmin(isAdmin) {
-        this.isAdmin = isAdmin;
-    }
-
     static addUserToDB(name, password, isAdmin) {
         const dbConnection = new DBConnection().getConnection();
         const hashedPassword = bcrypt.hashSync(password, saltRounds);
@@ -36,6 +22,19 @@ class UserModel {
     static hashPassword(password) {
         const saltRounds = 10;
         return bcrypt.hashSync(passw, saltRounds);
+    }
+
+    static authenticate(name, password) {
+        const dbConnection = new DBConnection().getConnection();
+        const stmt = dbConnection.prepare('SELECT * FROM users WHERE name = ?');
+        const row = stmt.get(name);
+        if (row === undefined) {
+            return [false, null];
+        }
+        if (bcrypt.compareSync(password, row.password)) {
+            return [true, UserFactory.create(row.id, row.name, row.isAdmin)];
+        }
+        return [false, null];
     }
 }
 module.exports = UserModel;
