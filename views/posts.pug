@@ -2,4 +2,49 @@ extends layout
 
 block content
 
-    h1=title
+    div(class='content')
+        div(class='margin-left')
+        div(class='center')
+            div(class='top')
+                h1=title
+                a(id='logoutLink') Logout
+            div#postList
+                each post in posts
+                    div(class='post', id=post.id)
+                        div(id=post.username)
+                            br
+                            div(class='postHeader')
+                                span#username= post.username
+                                span#date= post.date
+                            br
+                            div(class='postBody')
+                                div(class='postText')
+                                    label#text= post.text
+                                if userIsAdmin
+                                    div(class='deleteButton')
+                                        button(id='deleteButton' + post.id) Delete
+                    br
+            div#postFormDiv
+            form(id='postForm')
+                    textarea(id='postText', class='postTA' placeholder='Write your post here...')
+                    br
+                    button(id='postButton', type='submit') Post
+        div(class='margin-right')
+    script.
+        //- delete posts (dummy for now, will be replaced with AJAX later)
+        var posts = !{JSON.stringify(posts)};
+        posts.forEach(function(post) {
+                    document.getElementById('deleteButton' + post.id).addEventListener("click", function() {
+                        document.getElementById(post.id).style.display = "none";
+                    });
+                });
+        //- posting, dummy for now, will be replaced by actual posting
+        document.getElementById("postForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            var postText = document.getElementById("postText").value;
+            console.log("Post text: " + postText);
+        });
+        //- logout, also dummy for now
+        document.getElementById("logoutLink").addEventListener("click", function(event) {
+                    console.log("Logout link clicked");
+                });

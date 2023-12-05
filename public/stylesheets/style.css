@@ -1,49 +1,67 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   background-color: darkslategray;
   color: darkorange;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-  height: 100vh;
-  margin: 0;
+}
+
+a {
+    color: darkorange;
+    text-decoration: underline;
+    font: 18px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a:hover {
+  color: orange;
+  font-weight: bold;
+}
+
+.content {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.margin-left {
+  float: left;
+  width: 25%;
+}
+
+.margin-right {
+  width: 25%;
+  float: left
+}
+
+.center {
+  width: 50%;
+  float: left;
 }
 
 .container {
-  margin-left: auto;
-  margin-right: auto;
   display: flex;
+  justify-content: center;
   flex-direction: column;
-  max-width: auto;
 }
 
 .container_row {
   display: flex;
   flex-direction: row;
-  justify-content: center-between;
-  align-items: center;
-}
-
-.container input, .container label {
-  margin-bottom: 10px;
-}
-
-.container input {
-  padding: 5px;
-  border: 1px solid orange;
-  color: orange;
-  background-color: darkslategray;
-  border-radius: 3px;
-  margin-left: 5px;
+  justify-content: flex-end;
+  align-content: end;
+  align-items: flex-end;
+  margin-bottom: 5px;
 }
 
 .container button {
+  width: 40%;
+  float: left;
   padding: 5px;
   border: 1px solid darkorange;
   color: white;
   background-color: darkorange;
   border-radius: 3px;
-  width: 100%;
 }
 
 .container button:hover {
@@ -51,10 +69,129 @@ body {
   font-weight: bold;
 }
 
-textarea:focus, input:focus{
-    outline: 1px solid orange;
+.container input {
+  width: 50%;
+  float: left;
+  padding: 5px;
+  border: 1px solid orange;
+  color: yellow;
+  /* flex-basis: 200px; */
+  background-color: darkslategray;
+  border-radius: 3px;
+  margin-left: 5px;
 }
 
-a {
-  color: #00B7FF;
+.top {
+  margin-top: 5px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+.container label {
+  text-align: right;
+  margin-right: 10px;
+  width: 50%;
+  float: left;
+}
+
+#postList {
+  width: 100%;
+  margin: auto;
+  height: 75vh;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+}
+
+.post {
+  padding: 5px;
+  width: 100%;
+  float: left;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid darkorange;
+}
+
+.postHeader, .postBody {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+
+}
+
+.deleteButton button {
+  width: 100%;
+  float: left;
+  padding: 5px;
+  border: 1px solid darkorange;
+  color: white;
+  background-color: darkorange;
+  border-radius: 3px;
+}
+
+.deleteButton button:hover {
+  background-color: red;
+  font-weight: bold;
+}
+
+.postTA {
+  width: 100%;
+  float: center;
+  padding: 5px;
+  border: 1px solid orange;
+  color: yellow;
+  background-color: darkslategray;
+  border-radius: 3px;
+  /* margin: 5px; */
+}
+
+#postButton {
+  width: 50%;
+  float: right;
+  padding: 5px;
+  border: 1px solid darkorange;
+  color: white;
+  background-color: darkorange;
+  border-radius: 3px;
+}
+
+#postButton:hover {
+  background-color: green;
+  font-weight: bold;
+}
+
+@media (max-width: 1000px) {
+  body {
+    font: 34px "Lucida Grande", Helvetica, Arial, sans-serif;
+  }
+  .margin-left {
+    float: left;
+    width: 10%;
+  }
+
+  .margin-right {
+    width: 10%;
+    float: left
+  }
+
+  .center {
+    width: 80%;
+    float: left;
+  }
+  .container input {
+    width: 80%;
+    float: left;
+    min-height: 40px;
+    font: 24px "Lucida Grande", Helvetica, Arial, sans-serif;
+  }
+  .container label {
+    width: 20%;
+    float: left;
+  }
+  .container button {
+    width: 100%;
+    min-height: 50px;
+    font: 34px "Lucida Grande", Helvetica, Arial, sans-serif;
+  }
 }
