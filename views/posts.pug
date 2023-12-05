@@ -89,7 +89,16 @@ block content
 
         //- logout, also dummy for now
         document.getElementById("logoutLink").addEventListener("click", function(event) {
-                    console.log("Logout link clicked");
+            console.log("Logout link clicked");
+            // Make a GET request to the logout route
+            fetch('/logout', { method: 'GET' }).then(response => {
+                if (response.ok) {
+                    console.log('Logout successful');
+                    window.location.href = '/login'; // Redirect to the login page
+                } else {
+                    console.error('Logout failed');
+                }
+            }).catch(error => console.error('Error:', error));
         });
 
         //- scroll to bottom of post list
