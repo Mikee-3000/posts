@@ -14,12 +14,12 @@ block content
                         div(id=post.username)
                             br
                             div(class='postHeader')
-                                span#username= post.username
-                                span#date= post.date
+                                span#username= post.posted_by
+                                span#date= post.time_posted
                             br
                             div(class='postBody')
                                 div(class='postText')
-                                    label#text= post.text
+                                    label#text= post.post_text
                                 if userIsAdmin
                                     div(class='deleteButton')
                                         button(id='deleteButton' + post.id) Delete
@@ -34,17 +34,66 @@ block content
         //- delete posts (dummy for now, will be replaced with AJAX later)
         var posts = !{JSON.stringify(posts)};
         posts.forEach(function(post) {
-                    document.getElementById('deleteButton' + post.id).addEventListener("click", function() {
-                        document.getElementById(post.id).style.display = "none";
-                    });
+            document.getElementById('deleteButton' + post.id).addEventListener("click", function() {
+                const url = '/api/posts/' + post.id;
+                fetch(url, {
+                    method: 'DELETE',
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('HTTP error ' + response.status);
+                    }
+                }).then(() => {
+                    console.log('Post deleted successfully.');
+                    //- clear the textarea and reload the page
+                    location.reload();
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
                 });
-        //- posting, dummy for now, will be replaced by actual posting
+            });
+        });
+            
+        //- post a new post
         document.getElementById("postForm").addEventListener("submit", function(event) {
             event.preventDefault();
             var postText = document.getElementById("postText").value;
+            var postedBy = "#{username}";
             console.log("Post text: " + postText);
+            fetch('/api/posts/new', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    post_text: postText,
+                    time_posted: new Date().toISOString(),
+                    posted_by: postedBy
+                }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('HTTP error ' + response.status);
+                }
+            })
+            .then(() => {
+                console.log('Post added successfully.');
+                //- clear the textarea and reload the page
+                document.getElementById('postText').value = "";
+                location.reload();
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
         });
+
         //- logout, also dummy for now
         document.getElementById("logoutLink").addEventListener("click", function(event) {
                     console.log("Logout link clicked");
-                });
+        });
+
+        //- scroll to bottom of post list
+        window.onload = function() {
+            var div = document.getElementById('postList');
+            div.scrollTop = div.scrollHeight;
+        };

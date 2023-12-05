@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+const PostModel = require('../models/PostModel');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -12,24 +13,27 @@ router.get('/login', function(req, res, next) {
 });
 
 /* Login */ 
-// router.post('/login', (req, res) => {
 router.post('/login', function(req, res, next) {
   res.redirect('/posts');
 });
 
 /* Posts */
 router.get('/posts', function(req, res, next) {
-  var posts = [
-    {id: 1, username: 'John Doe', date: '12/05/2023', text: 'Hello, world!'},
-    {id: 2, username: 'Jane Doe', date: '13/05/2023', text: 'Hello, universe!'},
-    {id: 3, username: 'Jake Doe', date: '13/05/2023', text: 'Hello, universe!'},
-    {id: 4, username: 'Jake Doe', date: '13/05/2023', text: 'Hello, universe!'},
-    {id: 5, username: 'Jake Doe', date: '13/05/2023', text: '"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."Hello, universe!'},
-    {id: 6, username: 'Jake Doe', date: '13/05/2023', text: 'Hello, universe!'},
-    {id: 7, username: 'Jake Doe', date: '13/05/2023', text: 'Hello, universe!'},
-    {id: 8, username: 'Joan Doe', date: '13/05/2023', text: 'Hello, universe!'}
-  ];
-  res.render('posts', { title: 'Posts', posts: posts, userIsAdmin: false });
+  // change the date format to something more readable
+  PostModel.getAllPosts().then((posts) => {
+     posts.forEach(function(post) {
+        var date = new Date(post.time_posted);
+        post.time_posted = date.toLocaleString('en-IE', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
+    });
+    res.render('posts', { title: 'Posts', posts: posts, username: 'admin', userIsAdmin: true });
+  });
 });
 
 /* Logout */
