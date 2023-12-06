@@ -4,7 +4,7 @@ block content
     <div class="content">
         <div class="margin-left"></div>
         <div class="center">
-            <form action="/login" method="post">
+            <form action="/register" method="post">
                 <div class="container">
                     h2= title
                     <div class="container_row">
@@ -16,10 +16,10 @@ block content
                             <input type="password" placeholder="Enter Password" name="psw" required minlength="8" oninvalid="this.setCustomValidity('Password must be at least 8 characters long')">
                     </div>
                     <div class="container_row">
-                            <button type="submit">Login</button>
+                            <button type="submit">Register</button>
                     </div>
                     <div class="container_row">
-                            a(href='/register') Register
+                            a(href='/login') Login
                     </div>
                     </div>
                 </div>

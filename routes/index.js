@@ -16,6 +16,25 @@ router.get("/", function (req, res, next) {
     res.redirect("/posts");
 });
 
+/* Register */
+router.get("/register", function (req, res, next) {
+    res.render("register", { title: "Posts" });
+});
+
+/* Register */
+router.post("/register", function (req, res, next) {
+    const username = req.body.uname;
+    const password = req.body.psw;
+    let [registered, user] = UserModel.register(username, password);
+    if (registered) {
+        LogService.log('info', `User ${user.username} registered successfully.`);
+        res.redirect("/login");
+    } else {
+        LogService.log('error', `User ${username} failed to register, username already exists.`);
+        res.render("register", { title: "Posts" });
+    }
+});
+
 /* Login */
 router.get("/login", function (req, res, next) {
     res.render("login", { title: "Posts" });
