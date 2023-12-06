@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const DBConnection = require('../db/DBConnection');
-const UserFactory = require('../helper/UserFactory');
+const UserFactory = require('../helpers/UserFactory');
 
 class UserModel {
     static addUserToDB(name, password, isAdmin) {

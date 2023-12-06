@@ -7,6 +7,8 @@ block content
         div(class='center')
             div(class='top')
                 h1=title
+                if userIsAdmin
+                    a(href='/logs') Logs
                 a(id='logoutLink') Logout
             div#postList
                 each post in posts
@@ -44,7 +46,6 @@ block content
                         throw new Error('HTTP error ' + response.status);
                     }
                 }).then(() => {
-                    console.log('Post deleted successfully.');
                     //- clear the textarea and reload the page
                     location.reload();
                 })
@@ -59,7 +60,6 @@ block content
             event.preventDefault();
             var postText = document.getElementById("postText").value;
             var postedBy = "#{username}";
-            console.log("Post text: " + postText);
             fetch('/api/posts/new', {
                 method: 'POST',
                 headers: {
@@ -77,7 +77,6 @@ block content
                 }
             })
             .then(() => {
-                console.log('Post added successfully.');
                 //- clear the textarea and reload the page
                 document.getElementById('postText').value = "";
                 location.reload();
@@ -89,11 +88,9 @@ block content
 
         //- logout, also dummy for now
         document.getElementById("logoutLink").addEventListener("click", function(event) {
-            console.log("Logout link clicked");
             // Make a GET request to the logout route
             fetch('/logout', { method: 'GET' }).then(response => {
                 if (response.ok) {
-                    console.log('Logout successful');
                     window.location.href = '/login'; // Redirect to the login page
                 } else {
                     console.error('Logout failed');

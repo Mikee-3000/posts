@@ -2,11 +2,18 @@ var express = require("express");
 var router = express.Router();
 const PostModel = require("../models/PostModel");
 const UserModel = require("../models/UserModel");
+const LogService = require("../helpers/LogService");
 
 
 /* GET home page. */
 router.get("/", function (req, res, next) {
-    res.render("index", { title: "Posts" });
+    if (!req.session.isAuthenticated) {
+        LogService.log('info', `Non-authenticated user attempted to acces /, redirecting to login.`);
+        res.redirect("/login");
+        return;
+    }
+    LogService.log('info', `Authenticated user ${req.session.user.username} accessed /, redirecting to /posts.`);
+    res.redirect("/posts");
 });
 
 /* Login */
@@ -24,11 +31,12 @@ router.post("/login", function (req, res, next) {
             req.session.isAuthenticated = true;
             req.session.user = user;
             req.session.success = "Authenticated as " + user.username + " You may now access posts";
-            console.log(req.session);   
+
+            LogService.log('info', `User ${user.username} logged in successfully.`);
             res.redirect("/posts");
         });
   } else {
-    console.log("Authentication failed");
+    LogService.log('error', `User ${username} failed to log in.`);
     req.session.isAuthenticated = false;
     req.session.error = 'Authentication failed, please check your username and password'
     res.render("login", { title: "Posts" });
@@ -38,11 +46,11 @@ router.post("/login", function (req, res, next) {
 /* Posts */
 router.get("/posts", function (req, res, next) {
     if (!req.session.isAuthenticated) {
-        console.log('not authenticated, redirecting to login');
+        LogService.log('info', `Non-authenticated user attempted to acces /posts, redirecting to login.`);
         res.redirect("/login");
         return;
     }
-    console.log('isAuthenticated: ' + req.session.isAuthenticated);
+    LogService.log('info', `Authenticated user ${req.session.user.username} accessed /posts.`);
     // change the date format to something more readable
     PostModel.getAllPosts().then((posts) => {
         posts.forEach(function (post) {
@@ -56,7 +64,6 @@ router.get("/posts", function (req, res, next) {
                 second: "2-digit",
             });
     });
-    console.log(req.session);
     res.render("posts", {
       title: "Posts",
       posts: posts,
@@ -66,11 +73,30 @@ router.get("/posts", function (req, res, next) {
   });
 });
 
+/* Logs */
+router.get("/logs", function (req, res, next) {
+    if (!req.session.isAuthenticated) {
+        LogService.log('info', `Non-authenticated user attempted to acces /logs, redirecting to login.`);
+        res.redirect("/login");
+        return;
+    }
+    if (!req.session.user.isAdmin) {
+        LogService.log('info', `Authenticated non-admin user ${req.session.user.username} attempted to access /logs, redirecting to /posts.`);
+        res.redirect("/posts");
+        return;
+    }
+    LogService.log('info', `Authenticated admin user ${req.session.user.username} accessed /logs.`);
+    res.render("logs", {
+        title: "Logs",
+        logs: LogService.getAllLogs(),
+    });
+});
+
 /* Logout */
 router.get("/logout", function (req, res, next) {
     req.session.destroy(function(err) {
         if (err) {
-            console.log('Error:', err);
+            LogService.log('error', `Error destroying session: ${err}`);
         } else {
             res.sendStatus(200); // Send a success status
         }
