@@ -6,6 +6,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var apiRouter = require('./routes/api');
 var session = require('express-session');
+const LogService = require('./helpers/LogService');
 
 // connection to the database
 var DBConnection = require('./db/DBConnection');
@@ -29,6 +30,7 @@ dbConnection.getConnection().exec(`
     CREATE TABLE IF NOT EXISTS logs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     timestamp TEXT NOT NULL,
+    level TEXT NOT NULL,
     message TEXT NOT NULL
 );
 `);
@@ -37,8 +39,9 @@ dbConnection.getConnection().exec(`
 const UserModel = require('./models/UserModel');
 if (!UserModel.adminExists()) {
     UserModel.addUserToDB('admin', 'admin123', 1);
+    LogService.log('info', 'Admin created, password is admin123');
 } else {
-    console.log('Admin already exists');
+    LogService.log('info', 'Admin already exists');
 }
 
 var app = express();

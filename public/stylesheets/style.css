@@ -161,6 +161,20 @@ a:hover {
   font-weight: bold;
 }
 
+.logs {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.logEntry {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+.logEntry span {
+  padding: 5px;
+}
 @media (max-width: 1000px) {
   body {
     font: 34px "Lucida Grande", Helvetica, Arial, sans-serif;

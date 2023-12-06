@@ -1,0 +1,17 @@
+extends layout
+
+block content
+
+    div(class='content')
+        div(class='margin-left')
+        div(class='center')
+            div(class='top')
+                h1=title
+                a(href='/posts') Posts
+                a(id='logoutLink') Logout
+            div.logs
+                each log in logs
+                    div(class='logEntry', id=log.id)
+                        span.timestamp= log.timestamp
+                        span.level= log.level
+                        span.message= log.message

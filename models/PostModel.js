@@ -1,16 +1,17 @@
 const DBConnection = require('../db/DBConnection');
+const LogService = require('../helpers/LogService');
 
 class PostModel {
-    constructor(id, postText, timePosted, postedBy) {
-        this.id = id;
-        this.postText = postText;
-        this.timePosted = timePosted;
-        this.postedBy = postedBy;
-    }
+    // constructor(id, postText, timePosted, postedBy) {
+    //     this.id = id;
+    //     this.postText = postText;
+    //     this.timePosted = timePosted;
+    //     this.postedBy = postedBy;
+    // }
 
-    getPostedBy() {
-        return this.postedBy;
-    }
+    // getPostedBy() {
+    //     return this.postedBy;
+    // }
 
     static addPostToDB(post_text, time_posted, posted_by) {
         const dbConnection = new DBConnection().getConnection();
@@ -28,10 +29,10 @@ class PostModel {
         `);
         try {
             const rows = await sql.all([])
-            console.log(rows);
+            LogService.log('info', 'Posts retrieved successfully.')
             return rows;
         } catch (err) {
-            console.log(err);
+            LogService.log('error', 'Error retrieving posts.')
             return [];
         }
     }
@@ -41,9 +42,9 @@ class PostModel {
         const stmt = dbConnection.prepare('DELETE FROM posts WHERE id = ?');
         const info = stmt.run(id);
         if(info.changes === 1) {
-            console.log(`Post with ID: ${id} deleted successfully.`);
+            LogService.log('info', `Post with ID: ${id} deleted successfully.`);
         } else {
-            console.log(`No post found with ID: ${id}`);
+            LogService.log('error', `Error deleting post with ID: ${id}.`);
         }
     }
 }
