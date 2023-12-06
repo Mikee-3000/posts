@@ -45,6 +45,11 @@ a:hover {
   flex-direction: column;
 }
 
+.message {
+  color: pink;
+  font-weight: bold;
+}
+
 .container_row {
   display: flex;
   flex-direction: row;

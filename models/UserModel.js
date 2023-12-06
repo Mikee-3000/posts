@@ -12,6 +12,21 @@ class UserModel {
         return info;
     }
 
+    static userExists(name) {
+        const dbConnection = new DBConnection().getConnection();
+        const stmt = dbConnection.prepare('SELECT COUNT(*) as count FROM users WHERE name = ?');
+        const row = stmt.get(name);
+        return row.count > 0;
+    }
+
+    static register(name, password) {
+        if (UserModel.userExists(name)) {
+            return [false, null];
+        }
+        const info = UserModel.addUserToDB(name, password, 0);
+        return [true, UserFactory.create(info.lastInsertRowid, name, 0)];
+    }
+
     static adminExists() {
         const dbConnection = new DBConnection().getConnection();
         const stmt = dbConnection.prepare('SELECT COUNT(*) as count FROM users WHERE isAdmin = 1');

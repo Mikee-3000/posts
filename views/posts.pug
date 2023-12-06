@@ -33,27 +33,29 @@ block content
                     button(id='postButton', type='submit') Post
         div(class='margin-right')
     script.
-        //- delete posts (dummy for now, will be replaced with AJAX later)
-        var posts = !{JSON.stringify(posts)};
-        posts.forEach(function(post) {
-            document.getElementById('deleteButton' + post.id).addEventListener("click", function() {
-                const url = '/api/posts/' + post.id;
-                fetch(url, {
-                    method: 'DELETE',
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('HTTP error ' + response.status);
-                    }
-                }).then(() => {
-                    //- clear the textarea and reload the page
-                    location.reload();
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
+        //- delete posts 
+        if (#{userIsAdmin}) {
+            var posts = !{JSON.stringify(posts)};
+            posts.forEach(function(post) {
+                document.getElementById('deleteButton' + post.id).addEventListener("click", function() {
+                    const url = '/api/posts/' + post.id;
+                    fetch(url, {
+                        method: 'DELETE',
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('HTTP error ' + response.status);
+                        }
+                    }).then(() => {
+                        //- clear the textarea and reload the page
+                        location.reload();
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    });
                 });
             });
-        });
+        }
             
         //- post a new post
         document.getElementById("postForm").addEventListener("submit", function(event) {
@@ -85,21 +87,10 @@ block content
                 console.error('Error:', error);
             });
         });
-
-        //- logout, also dummy for now
-        document.getElementById("logoutLink").addEventListener("click", function(event) {
-            // Make a GET request to the logout route
-            fetch('/logout', { method: 'GET' }).then(response => {
-                if (response.ok) {
-                    window.location.href = '/login'; // Redirect to the login page
-                } else {
-                    console.error('Logout failed');
-                }
-            }).catch(error => console.error('Error:', error));
-        });
-
         //- scroll to bottom of post list
         window.onload = function() {
             var div = document.getElementById('postList');
             div.scrollTop = div.scrollHeight;
         };
+    //- logout
+    script(src="/javascripts/logout.js")
