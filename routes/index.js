@@ -28,10 +28,10 @@ router.post("/register", function (req, res, next) {
     let [registered, user] = UserModel.register(username, password);
     if (registered) {
         LogService.log('info', `User ${user.username} registered successfully.`);
-        res.redirect("/login");
+        res.render("login", { title: "Posts", message: "Registration successful, please login with your new details." });
     } else {
         LogService.log('error', `User ${username} failed to register, username already exists.`);
-        res.render("register", { title: "Posts" });
+        res.render("register", { title: "Posts", message: "Please choose different details" });
     }
 });
 
@@ -58,7 +58,7 @@ router.post("/login", function (req, res, next) {
     LogService.log('error', `User ${username} failed to log in.`);
     req.session.isAuthenticated = false;
     req.session.error = 'Authentication failed, please check your username and password'
-    res.render("login", { title: "Posts" });
+    res.render("login", { title: "Posts", message: "Authentication failed, please check your username and password" });
   }
 });
 

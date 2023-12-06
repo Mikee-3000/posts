@@ -8,6 +8,12 @@ block content
                 <div class="container">
                     h2= title
                     <div class="container_row">
+                        <div class="message">
+                            if message
+                                = message
+                        </div>
+                    </div>
+                    <div class="container_row">
                             <label for="uname"><b>Username</b></label>
                             <input type="text" placeholder="Enter Username" name="uname" required minlength="4" oninvalid="this.setCustomValidity('Username must be at least 4 characters long')">
                     </div>
