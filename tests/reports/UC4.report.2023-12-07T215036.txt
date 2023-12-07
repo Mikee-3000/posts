@@ -1,0 +1,2 @@
+2023-12-07T215036 UC4 (alternate flow A5): passed, The regular user cannot see a delete button.
+2023-12-07T215036 UC4 (normal flow): passed, The post was deleted.

@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var apiRouter = require('./routes/api');
+const flash = require('connect-flash');
 var session = require('express-session');
 const LogService = require('./helpers/LogService');
 
@@ -51,6 +52,8 @@ app.use(session({
   saveUninitialized: false, // don't create session until something stored
   secret: 'shhhh, very secret'
 }));
+
+app.use(flash());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

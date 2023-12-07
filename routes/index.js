@@ -1,5 +1,6 @@
 var express = require("express");
 var router = express.Router();
+const flash = require('connect-flash');
 const PostModel = require("../models/PostModel");
 const UserModel = require("../models/UserModel");
 const LogService = require("../helpers/LogService");
@@ -28,16 +29,21 @@ router.post("/register", function (req, res, next) {
     let [registered, user] = UserModel.register(username, password);
     if (registered) {
         LogService.log('info', `User ${user.username} registered successfully.`);
-        res.render("login", { title: "Posts", message: "Registration successful, please login with your new details." });
+        res.json({ success: true, message: "Registration successful, please login with your new details."});
     } else {
         LogService.log('error', `User ${username} failed to register, username already exists.`);
-        res.render("register", { title: "Posts", message: "Please choose different details" });
+        res.status(409).json({ error: "Registration error.", message: "Registration Error. Please choose different details." });
     }
 });
 
 /* Login */
 router.get("/login", function (req, res, next) {
-    res.render("login", { title: "Posts" });
+    if (req.query.message) {
+        message = req.query.message;
+    } else {
+        message = "";
+    }
+    res.render("login", { title: "Posts", message: message });
 });
 
 /* Login */
@@ -58,7 +64,7 @@ router.post("/login", function (req, res, next) {
     LogService.log('error', `User ${username} failed to log in.`);
     req.session.isAuthenticated = false;
     req.session.error = 'Authentication failed, please check your username and password'
-    res.render("login", { title: "Posts", message: "Authentication failed, please check your username and password" });
+    res.status(409).json({ error: "Registration error.", message: "Authentication failed, please check your username and password."});
   }
 });
 

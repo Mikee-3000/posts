@@ -1,35 +1,29 @@
 extends layout
 
 block content
-    <div class="content">
-        <div class="margin-left"></div>
-        <div class="center">
-            <form action="/login" method="post">
-                <div class="container">
+    .content
+        .margin-left
+        .center
+            form#form
+                .container
                     h2= title
-                    <div class="container_row">
-                        <div class="message">
+                    .container_row
+                        #message.message
                             if message
                                 = message
-                        </div>
-                    </div>
-                    <div class="container_row">
-                            <label for="uname"><b>Username</b></label>
-                            <input type="text" placeholder="Enter Username" name="uname" required minlength="4" oninvalid="this.setCustomValidity('Username must be at least 4 characters long')">
-                    </div>
-                    <div class="container_row">
-                            <label for="psw"><b>Password</b></label>
-                            <input type="password" placeholder="Enter Password" name="psw" required minlength="8" oninvalid="this.setCustomValidity('Password must be at least 8 characters long')">
-                    </div>
-                    <div class="container_row">
-                            <button type="submit">Login</button>
-                    </div>
-                    <div class="container_row">
-                            a(href='/register') Register
-                    </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-        <div class="margin-right"></div>
-    </div>
+                    .container_row
+                        label(for="uname") <b>Username</b>
+                        input(type="text" placeholder="Enter Username" name="uname" id="uname")
+                    .container_row
+                        label(for="psw") <b>Password</b>
+                        input(type="password" placeholder="Enter Password" name="psw" id="psw")
+                    .container_row
+                        button(type="button" id="submitBtn") Login
+                    .container_row
+                        a(href='/register') Register
+            script(src="/javascripts/validate_and_send_credentials.js")
+            script.
+                document.getElementById('submitBtn').addEventListener('click', function() {
+                    sendCreds('login');
+                })
+        .margin-right
