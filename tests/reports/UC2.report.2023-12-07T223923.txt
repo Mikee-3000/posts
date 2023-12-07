@@ -1,0 +1,4 @@
+2023-12-07T223923 UC2 (normal flow): passed, Login successful
+2023-12-07T223923 UC2 (alternate flow A3): passed, Too short a username was not permitted.
+2023-12-07T223923 UC2 (alternate flow A3): passed, Too short a password was not permitted.
+2023-12-07T223923 UC2 (alternate flow A4): passed, Incorrect credentials resulted in expected message.

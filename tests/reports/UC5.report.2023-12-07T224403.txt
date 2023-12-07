@@ -1,0 +1,2 @@
+2023-12-07T224403 UC5 (normal flow): passed, Admin user can see the logs.
+2023-12-07T224403 UC5 (alternate flow A6): passed, Regular user can't see the logs link.

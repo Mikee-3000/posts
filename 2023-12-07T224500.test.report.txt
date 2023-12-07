@@ -1,0 +1,15 @@
+2023-12-07T223912 UC1 (normal flow): passed, Registration successful
+2023-12-07T223912 UC1 (alternate flow A1): passed, Too short a username was not permitted.
+2023-12-07T223912 UC1 (alternate flow A1): passed, Too short a password was not permitted.
+2023-12-07T223912 UC1 (alternate flow A2): passed, Existing username was not permitted for new user registration.
+2023-12-07T223912 UC1 (Exceptional flow E1): passed, DB not accessible, expected message found.
+2023-12-07T223923 UC2 (normal flow): passed, Login successful
+2023-12-07T223923 UC2 (alternate flow A3): passed, Too short a username was not permitted.
+2023-12-07T223923 UC2 (alternate flow A3): passed, Too short a password was not permitted.
+2023-12-07T223923 UC2 (alternate flow A4): passed, Incorrect credentials resulted in expected message.
+2023-12-07T223932 UC3 (normal flow): passed, The test post was sent and found in the post list.
+2023-12-07T224315 UC4 (alternate flow A5): passed, The regular user cannot see a delete button.
+2023-12-07T224315 UC4 (normal flow): passed, The post was deleted.
+2023-12-07T224403 UC5 (normal flow): passed, Admin user can see the logs.
+2023-12-07T224403 UC5 (alternate flow A6): passed, Regular user can't see the logs link.
+2023-12-07T224425 UC6 (normal flow): passed, Logout successful.

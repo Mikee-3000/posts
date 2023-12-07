@@ -1,0 +1,5 @@
+2023-12-07T223912 UC1 (normal flow): passed, Registration successful
+2023-12-07T223912 UC1 (alternate flow A1): passed, Too short a username was not permitted.
+2023-12-07T223912 UC1 (alternate flow A1): passed, Too short a password was not permitted.
+2023-12-07T223912 UC1 (alternate flow A2): passed, Existing username was not permitted for new user registration.
+2023-12-07T223912 UC1 (Exceptional flow E1): passed, DB not accessible, expected message found.
