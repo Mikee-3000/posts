@@ -181,9 +181,9 @@ a:hover {
   padding: 5px;
 }
 @media (max-width: 1000px) {
-  body {
+  /* body {
     font: 34px "Lucida Grande", Helvetica, Arial, sans-serif;
-  }
+  } */
   .margin-left {
     float: left;
     width: 10%;
@@ -198,7 +198,7 @@ a:hover {
     width: 80%;
     float: left;
   }
-  .container input {
+  /* .container input {
     width: 80%;
     float: left;
     min-height: 40px;
@@ -213,4 +213,4 @@ a:hover {
     min-height: 50px;
     font: 34px "Lucida Grande", Helvetica, Arial, sans-serif;
   }
-}
+} */

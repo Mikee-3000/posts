@@ -1,5 +1,4 @@
 from selenium.webdriver.common.by import By
-from selenium import webdriver
 import tconf 
 from time import sleep
 import random
@@ -61,9 +60,9 @@ except AssertionError:
 
 # close and start the server to start a new session (logout has not yet been tested and driver.quite() doesn't seem to work)
 app_process.kill()
-sleep(1)
+sleep(3)
 app_process = subprocess.Popen(["node", "app.js"])
-# tconf.appStartCheck(test_start_time, app_process)
+tconf.appStartCheck(test_start_time, app_process)
 
 
 # Normal flow
