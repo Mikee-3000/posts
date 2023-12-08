@@ -39,6 +39,9 @@ router.post("/register", function (req, res, next) {
 /* Login */
 router.get("/login", function (req, res, next) {
     if (req.query.message) {
+        // insecure
+        // enc_message = req.query.message;
+        // message = '<div>' + decodeURIComponent(enc_message) + '</div>';
         message = req.query.message;
     } else {
         message = "";
@@ -64,7 +67,7 @@ router.post("/login", function (req, res, next) {
     LogService.log('error', `User ${username} failed to log in.`);
     req.session.isAuthenticated = false;
     req.session.error = 'Authentication failed, please check your username and password'
-    res.status(409).json({ error: "Registration error.", message: "Authentication failed, please check your username and password."});
+    res.status(409).json({ error: "Authentication error.", message: "Authentication failed, please check your username and password."});
   }
 });
 

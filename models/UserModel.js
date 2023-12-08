@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const md5 = require('js-md5');
 const saltRounds = 10;
 const DBConnection = require('../db/DBConnection');
 const UserFactory = require('../helpers/UserFactory');
@@ -6,7 +7,7 @@ const UserFactory = require('../helpers/UserFactory');
 class UserModel {
     static addUserToDB(name, password, isAdmin) {
         const dbConnection = new DBConnection().getConnection();
-        const hashedPassword = bcrypt.hashSync(password, saltRounds);
+        const hashedPassword = UserModel.hashPassword(password);
         const sql = dbConnection.prepare('INSERT INTO users (name, password, isAdmin) VALUES (?, ?, ?)');
         const info = sql.run(name, hashedPassword, isAdmin);
         return info;
@@ -35,14 +36,21 @@ class UserModel {
     }
 
     static hashPassword(password) {
-        const saltRounds = 10;
-        return bcrypt.hashSync(passw, saltRounds);
+        // insecure
+        var hash = md5.create();
+        hash.update(password);
+        return hash.hex();
+        // const saltRounds = 10;
+        // return bcrypt.hashSync(password, saltRounds);
     }
 
     static authenticate(name, password) {
         const dbConnection = new DBConnection().getConnection();
         // insecure
-        const row = dbConnection.prepare("SELECT * FROM users WHERE name = '" + name + "' and password = '" + password + "'").all()[0];
+        console.log(password)
+        let hPass = UserModel.hashPassword(password);
+        console.log(hPass)
+        const row = dbConnection.prepare("SELECT * FROM users WHERE name = '" + name + "' and password = '" + hPass + "'").all()[0];
         console.log(row);
         // const stmt = dbConnection.prepare('SELECT * FROM users WHERE name = ?');
         // const row = stmt.get(name);
@@ -54,7 +62,7 @@ class UserModel {
         // if (bcrypt.compareSync(password, row.password)) {
         //     return [true, UserFactory.create(row.id, row.name, row.isAdmin)];
         // }
-        return [false, null];
+        // return [false, null];
     }
 }
 module.exports = UserModel;

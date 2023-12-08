@@ -8,9 +8,11 @@ block content
                 .container
                     h2= title
                     .container_row
-                        #message.message
+                        div#message.message
                             if message
-                                = message
+                                //- insecure
+                                !=message
+                                //- =message
                     .container_row
                         label(for="uname") <b>Username</b>
                         input(type="text" placeholder="Enter Username" name="uname" id="uname")
