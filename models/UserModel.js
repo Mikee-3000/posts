@@ -41,14 +41,19 @@ class UserModel {
 
     static authenticate(name, password) {
         const dbConnection = new DBConnection().getConnection();
-        const stmt = dbConnection.prepare('SELECT * FROM users WHERE name = ?');
-        const row = stmt.get(name);
+        // insecure
+        const row = dbConnection.prepare("SELECT * FROM users WHERE name = '" + name + "' and password = '" + password + "'").all()[0];
+        console.log(row);
+        // const stmt = dbConnection.prepare('SELECT * FROM users WHERE name = ?');
+        // const row = stmt.get(name);
         if (row === undefined) {
             return [false, null];
         }
-        if (bcrypt.compareSync(password, row.password)) {
-            return [true, UserFactory.create(row.id, row.name, row.isAdmin)];
-        }
+        // insecure
+        return [true, UserFactory.create(row.id, row.name, row.isAdmin)];
+        // if (bcrypt.compareSync(password, row.password)) {
+        //     return [true, UserFactory.create(row.id, row.name, row.isAdmin)];
+        // }
         return [false, null];
     }
 }

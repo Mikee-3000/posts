@@ -58,7 +58,7 @@ router.post("/login", function (req, res, next) {
             req.session.success = "Authenticated as " + user.username + " You may now access posts";
 
             LogService.log('info', `User ${user.username} logged in successfully.`);
-            res.redirect("/posts");
+            res.json({ success: true});
         });
   } else {
     LogService.log('error', `User ${username} failed to log in.`);
