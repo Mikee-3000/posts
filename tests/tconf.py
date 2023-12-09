@@ -89,3 +89,14 @@ def post(text):
     post_ta.send_keys(text)
     send_button = driver.find_element(by=By.ID, value="postButton")
     send_button.click()
+
+def addPosts(amount):
+    text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    # find the post text area and put text in it
+    for i in range(amount):
+        post_ta = driver.find_element(by=By.ID, value="postText")
+        post_ta.send_keys(text)
+        # send the post
+        send_button = driver.find_element(by=By.ID, value="postButton")
+        send_button.click()
+        driver.implicitly_wait(0.5)

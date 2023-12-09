@@ -1,7 +1,6 @@
 extends layout
 
 block content
-
     div(class='content')
         div(class='margin-left')
         div(class='center')
@@ -10,18 +9,25 @@ block content
                 if userIsAdmin
                     a(href='/logs') Logs
                 a(id='logoutLink') Logout
+            #message 
+                if message
+                    //- insecure
+                    !=message
             div#postList
                 each post in posts
                     div(class='post', id=post.id)
                         div(id=post.username)
                             br
                             div(class='postHeader')
+                                span(id=post.id+'selected')
                                 span#username= post.posted_by
                                 span#date= post.time_posted
+                                span#link
+                                    a(onclick='copyPostLink("' + post.id + '")') Copy link 📋
                             br
                             div(class='postBody')
                                 div(class='postText')
-                                    label#text= post.post_text
+                                    label(id=post.id+'text')= post.post_text
                                 if userIsAdmin
                                     div(class='deleteButton')
                                         button(id='deleteButton' + post.id) Delete
@@ -87,10 +93,60 @@ block content
                 console.error('Error:', error);
             });
         });
-        //- scroll to bottom of post list
-        window.onload = function() {
-            var div = document.getElementById('postList');
-            div.scrollTop = div.scrollHeight;
-        };
+        function checkForSelected(postId) {
+            var selectedPost = window.location.hash.substring(1);
+            console.log('selected post id ' + postId );
+            if (selectedPost == postId) {
+                this.innerHTML = '👆';
+            }
+        }
+        function copyPostLink(pid) {
+            //- copy to clipboard https://www.w3schools.com/howto/howto_js_copy_clipboard.asp
+            var copyText = document.URL + '#' + pid;
+            console.log(copyText);
+            navigator.clipboard.writeText(copyText);
+        } 
     //- logout
     script(src="/javascripts/logout.js")
+    script.
+        function addEventListenerToSelectedPost(selectedPost) {
+            //- a custom function to add an event listener to the selected post, so that it can be notified on hashchange
+            //- https://www.geeksforgeeks.org/javascript-custom-events/
+            var selectionEvent = new CustomEvent('selectionEvent', {
+                detail: { message: selectedPost }
+            });
+            var messageDiv = document.getElementById('message');
+            //- clear the message if there's any
+            messageDiv.innerHTML = '';  
+            var span = document.getElementById(selectedPost+'selected');
+            //- this can be null, in which case warning is to be shown
+            if (span === null) {
+                //- insecure
+                let decSelectedPost = decodeURIComponent(selectedPost)
+                messageDiv.innerHTML = '❗ post not found: #' + decSelectedPost
+            } else {
+                span.addEventListener('selectionEvent', function (e) {
+                    this.innerHTML = '👉 post #' + e.detail.message
+                }, false);
+                span.dispatchEvent(selectionEvent);
+            }
+        }
+        window.onload = function() {
+            //- get the selected post id from the url
+            //- https://developer.mozilla.org/en-US/docs/Web/API/Location/hash
+            var selectedPost = window.location.hash.substring(1);
+            if (selectedPost) {
+                //- I couldn't get documentFindById to work (the dom is already loaded), so I'm using a custom event instead
+                addEventListenerToSelectedPost(selectedPost);
+            } else {
+                //- scroll to bottom of post list
+                //- https://stackoverflow.com/questions/270612/scroll-to-bottom-of-div
+                var div = document.getElementById('postList');
+                div.scrollTop = div.scrollHeight;
+            }
+        };
+        https://developer.mozilla.org/en-US/docs/Web/API/HashChangeEvent/newURL//- 
+        window.addEventListener("hashchange", (event) => {
+            var selectedPost = window.location.hash.substring(1);
+            addEventListenerToSelectedPost(selectedPost);
+        });
