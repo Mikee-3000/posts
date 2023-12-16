@@ -21,11 +21,16 @@ function sendCreds(endpoint) {
 
                 });
             } else if (response.status === 200) {
-                if (endpoint === 'login') {
-                    window.location.href = '/posts';
-                } else {
-                    window.location.href = '/login?message=Registration successful, please login with your new details.';
-                }
+                // let msg = "";
+                console.log(200);
+                const data = response.json().then(data=> {
+                    msg = data.message;
+                    if (endpoint === 'login') {
+                        window.location.href = '/posts';
+                    } else {
+                        window.location.href = `/login?message=${msg}`;
+                    }
+                })
             } else {
                 message_div.textContent = 'An error occurred while registering. Please try again, if error persists contact the administrator.';
             }

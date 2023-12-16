@@ -47,6 +47,7 @@ if (!UserModel.adminExists()) {
 
 var app = express();
 
+// https://expressjs.com/en/resources/middleware/session.html
 app.use(session({
   resave: false, // don't save session if unmodified
   saveUninitialized: false, // don't create session until something stored

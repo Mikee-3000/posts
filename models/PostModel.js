@@ -2,24 +2,15 @@ const DBConnection = require('../db/DBConnection');
 const LogService = require('../helpers/LogService');
 
 class PostModel {
-    // constructor(id, postText, timePosted, postedBy) {
-    //     this.id = id;
-    //     this.postText = postText;
-    //     this.timePosted = timePosted;
-    //     this.postedBy = postedBy;
-    // }
-
-    // getPostedBy() {
-    //     return this.postedBy;
-    // }
-
     static addPostToDB(post_text, time_posted, posted_by) {
         const dbConnection = new DBConnection().getConnection();
         const stmt = dbConnection.prepare('INSERT INTO posts (post_text, time_posted, posted_by) VALUES (?, ?, (SELECT id FROM users WHERE name = ?))');
+        // https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md#runbindparameters---object
         const info = stmt.run(post_text, time_posted, posted_by);
         return info;
     }
 
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function
     static async getAllPosts() {
         const dbConnection = new DBConnection().getConnection();
         var sql = dbConnection.prepare(`
