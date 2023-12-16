@@ -6,6 +6,7 @@ const UserModel = require("../models/UserModel");
 const LogService = require("../helpers/LogService");
 
 
+// https://expressjs.com/en/guide/routing.html
 /* GET home page. */
 router.get("/", function (req, res, next) {
     if (!req.session.isAuthenticated) {

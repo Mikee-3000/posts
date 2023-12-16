@@ -11,10 +11,12 @@ class LogModel {
 
     static getAllLogs() {
         const dbConnection = new DBConnection().getConnection();
+        // https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md#preparestring---statement
         var sql = dbConnection.prepare(`
             SELECT * FROM logs;
         `);
         try {
+            // https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md#allbindparameters---array-of-rows
             const rows = sql.all([])
             return rows;
         } catch (err) {
