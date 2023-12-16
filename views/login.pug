@@ -10,9 +10,7 @@ block content
                     .container_row
                         div#message.message
                             if message
-                                //- insecure
-                                !=message
-                                //- =message
+                                =message
                     .container_row
                         label(for="uname") <b>Username</b>
                         input(type="text" placeholder="Enter Username" name="uname" id="uname")

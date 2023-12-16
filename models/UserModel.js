@@ -46,11 +46,9 @@ class UserModel {
 
     static authenticate(name, password) {
         const dbConnection = new DBConnection().getConnection();
-        // insecure
         let hPass = UserModel.hashPassword(password);
-        const row = dbConnection.prepare("SELECT * FROM users WHERE name = '" + name + "' and password = '" + hPass + "'").all()[0];
-        // const stmt = dbConnection.prepare('SELECT * FROM users WHERE name = ?');
-        // const row = stmt.get(name);
+        const stmt = dbConnection.prepare('SELECT * FROM users WHERE name = ?');
+        const row = stmt.get(name);
         if (row === undefined) {
             return [false, null];
         }

@@ -11,8 +11,7 @@ block content
                 a(id='logoutLink') Logout
             #message 
                 if message
-                    //- insecure
-                    !=message
+                    =message
             div#postList
                 each post in posts
                     div(class='post', id=post.id)
@@ -97,7 +96,7 @@ block content
             var selectedPost = window.location.hash.substring(1);
             console.log('selected post id ' + postId );
             if (selectedPost == postId) {
-                this.innerHTML = '👆';
+                this.innerText = '👆';
             }
         }
         function copyPostLink(pid) {
@@ -117,16 +116,16 @@ block content
             });
             var messageDiv = document.getElementById('message');
             //- clear the message if there's any
-            messageDiv.innerHTML = '';  
+            messageDiv.innerText = '';  
             var span = document.getElementById(selectedPost+'selected');
             //- this can be null, in which case warning is to be shown
             if (span === null) {
                 //- insecure
                 let decSelectedPost = decodeURIComponent(selectedPost)
-                messageDiv.innerHTML = '❗ post not found: #' + decSelectedPost
+                messageDiv.innerText = '❗ post not found: #' + decSelectedPost
             } else {
                 span.addEventListener('selectionEvent', function (e) {
-                    this.innerHTML = '👉 post #' + e.detail.message
+                    this.innerText = '👉 post #' + e.detail.message
                 }, false);
                 span.dispatchEvent(selectionEvent);
             }

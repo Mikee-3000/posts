@@ -17,7 +17,7 @@ function sendCreds(endpoint) {
         .then(function(response) {
             if (response.status === 409) {
                 const data = response.json().then(data => {
-                    message_div.textContent = data.message;
+                    message_div.textContent = "Registration Error. Please choose different details.";
 
                 });
             } else if (response.status === 200) {
@@ -28,7 +28,7 @@ function sendCreds(endpoint) {
                     if (endpoint === 'login') {
                         window.location.href = '/posts';
                     } else {
-                        window.location.href = `/login?message=${msg}`;
+                        window.location.href = `/login?register=true`;
                     }
                 })
             } else {

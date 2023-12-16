@@ -30,20 +30,17 @@ router.post("/register", function (req, res, next) {
     let [registered, user] = UserModel.register(username, password);
     if (registered) {
         LogService.log('info', `User ${user.username} registered successfully.`);
-        res.json({ success: true, message: "Registration successful, please login with your new details."});
+        res.json({ success: true});
     } else {
         LogService.log('error', `User ${username} failed to register, username already exists.`);
-        res.status(409).json({ error: "Registration error.", message: "Registration Error. Please choose different details." });
+        res.status(409).json({ error: "Registration error."});
     }
 });
 
 /* Login */
 router.get("/login", function (req, res, next) {
-    if (req.query.message) {
-        // insecure
-        // enc_message = req.query.message;
-        // message = '<div>' + decodeURIComponent(enc_message) + '</div>';
-        message = req.query.message;
+    if (req.query.register === "true") {
+        message = "Registration successful, please login with your new details.";
     } else {
         message = "";
     }
