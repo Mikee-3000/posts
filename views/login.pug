@@ -10,15 +10,15 @@ block content
                     .container_row
                         div#message.message
                             if message
-                                //- insecure
-                                !=message
-                                //- =message
+                                =message
                     .container_row
                         label(for="uname") <b>Username</b>
                         input(type="text" placeholder="Enter Username" name="uname" id="uname")
                     .container_row
                         label(for="psw") <b>Password</b>
                         input(type="password" placeholder="Enter Password" name="psw" id="psw")
+                    .container_row
+                        input(type='hidden' name='csrfToken' value=csrfToken id='csrfToken')
                     .container_row
                         button(type="button" id="submitBtn") Login
                     .container_row

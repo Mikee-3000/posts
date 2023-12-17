@@ -6,6 +6,7 @@ class DBConnection {
             return DBConnection.instance;
         }
 
+        // https://github.com/WiseLibs/better-sqlite3
         this.db = new Database('./db.sqlite');
         this.db.exec('PRAGMA foreign_keys = ON');
         DBConnection.instance = this;

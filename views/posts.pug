@@ -11,8 +11,7 @@ block content
                 a(id='logoutLink') Logout
             #message 
                 if message
-                    //- insecure
-                    !=message
+                    =message
             div#postList
                 each post in posts
                     div(class='post', id=post.id)
@@ -31,43 +30,39 @@ block content
                                 if userIsAdmin
                                     div(class='deleteButton')
                                         button(id='deleteButton' + post.id) Delete
+                                        script.
+                                            document.getElementById('deleteButton' + #{post.id}).addEventListener("click", function() {
+                                                const url = '/api/posts/' + #{post.id};
+                                                fetch(url, {
+                                                    method: 'DELETE',
+                                                })
+                                                .then(response => {
+                                                    if (!response.ok) {
+                                                        throw new Error('HTTP error ' + response.status);
+                                                    }
+                                                }).then(() => {
+                                                    //- clear the textarea and reload the page
+                                                    location.reload();
+                                                })
+                                                .catch((error) => {
+                                                    console.error('Error:', error);
+                                                });
+                                            });
                     br
             div#postFormDiv
             form(id='postForm')
                     textarea(id='postText', class='postTA' placeholder='Write your post here...')
+                    input(type='hidden' name='csrfToken' value=csrfToken id='csrfToken')
                     br
                     button(id='postButton', type='submit') Post
         div(class='margin-right')
     script.
-        //- delete posts 
-        if (#{userIsAdmin}) {
-            var posts = !{JSON.stringify(posts)};
-            posts.forEach(function(post) {
-                document.getElementById('deleteButton' + post.id).addEventListener("click", function() {
-                    const url = '/api/posts/' + post.id;
-                    fetch(url, {
-                        method: 'DELETE',
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('HTTP error ' + response.status);
-                        }
-                    }).then(() => {
-                        //- clear the textarea and reload the page
-                        location.reload();
-                    })
-                    .catch((error) => {
-                        console.error('Error:', error);
-                    });
-                });
-            });
-        }
-            
         //- post a new post
         document.getElementById("postForm").addEventListener("submit", function(event) {
             event.preventDefault();
             var postText = document.getElementById("postText").value;
             var postedBy = "#{username}";
+            var csrfToken = document.getElementById("csrfToken").value;
             fetch('/api/posts/new', {
                 method: 'POST',
                 headers: {
@@ -76,7 +71,8 @@ block content
                 body: JSON.stringify({
                     post_text: postText,
                     time_posted: new Date().toISOString(),
-                    posted_by: postedBy
+                    posted_by: postedBy,
+                    csrfToken: csrfToken
                 }),
             })
             .then(response => {
@@ -95,15 +91,13 @@ block content
         });
         function checkForSelected(postId) {
             var selectedPost = window.location.hash.substring(1);
-            console.log('selected post id ' + postId );
             if (selectedPost == postId) {
-                this.innerHTML = '👆';
+                this.innerText = '👆';
             }
         }
         function copyPostLink(pid) {
             //- copy to clipboard https://www.w3schools.com/howto/howto_js_copy_clipboard.asp
             var copyText = document.URL + '#' + pid;
-            console.log(copyText);
             navigator.clipboard.writeText(copyText);
         } 
     //- logout
@@ -117,16 +111,16 @@ block content
             });
             var messageDiv = document.getElementById('message');
             //- clear the message if there's any
-            messageDiv.innerHTML = '';  
+            messageDiv.innerText = '';  
             var span = document.getElementById(selectedPost+'selected');
             //- this can be null, in which case warning is to be shown
             if (span === null) {
                 //- insecure
                 let decSelectedPost = decodeURIComponent(selectedPost)
-                messageDiv.innerHTML = '❗ post not found: #' + decSelectedPost
+                messageDiv.innerText = '❗ post not found: #' + decSelectedPost
             } else {
                 span.addEventListener('selectionEvent', function (e) {
-                    this.innerHTML = '👉 post #' + e.detail.message
+                    this.innerText = '👉 post #' + e.detail.message
                 }, false);
                 span.dispatchEvent(selectionEvent);
             }
@@ -135,7 +129,8 @@ block content
             //- get the selected post id from the url
             //- https://developer.mozilla.org/en-US/docs/Web/API/Location/hash
             var selectedPost = window.location.hash.substring(1);
-            if (selectedPost) {
+            //- only run if the selected post is a number
+            if (selectedPost && /^\d+$/.test(selectedPost)) {
                 //- I couldn't get documentFindById to work (the dom is already loaded), so I'm using a custom event instead
                 addEventListenerToSelectedPost(selectedPost);
             } else {
@@ -148,5 +143,7 @@ block content
         https://developer.mozilla.org/en-US/docs/Web/API/HashChangeEvent/newURL//- 
         window.addEventListener("hashchange", (event) => {
             var selectedPost = window.location.hash.substring(1);
-            addEventListenerToSelectedPost(selectedPost);
+            if (selectedPost && /^\d+$/.test(selectedPost)) {
+                addEventListenerToSelectedPost(selectedPost);
+            }
         });
