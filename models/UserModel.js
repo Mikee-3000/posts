@@ -1,16 +1,18 @@
-const bcrypt = require('bcrypt');
-const md5 = require('js-md5');
-const saltRounds = 10;
+const argon2 = require('argon2');
 const DBConnection = require('../db/DBConnection');
 const UserFactory = require('../helpers/UserFactory');
+const LogService = require('../helpers/LogService');
 
 class UserModel {
     static addUserToDB(name, password, isAdmin) {
         const dbConnection = new DBConnection().getConnection();
-        const hashedPassword = UserModel.hashPassword(password);
-        const sql = dbConnection.prepare('INSERT INTO users (name, password, isAdmin) VALUES (?, ?, ?)');
-        const info = sql.run(name, hashedPassword, isAdmin);
-        return info;
+        return UserModel.hashPassword(password).then(hashedPassword => {
+            const sql = dbConnection.prepare('INSERT INTO users (name, password, isAdmin) VALUES (?, ?, ?)');
+            const info = sql.run(name, hashedPassword, isAdmin);
+            return info;
+        }).catch(err => {
+            LogService.log('error', `Error hashing password: ${err}`);
+        });
     }
 
     static userExists(name) {
@@ -36,28 +38,40 @@ class UserModel {
     }
 
     static hashPassword(password) {
-        // insecure
-        var hash = md5.create();
-        hash.update(password);
-        return hash.hex();
-        // const saltRounds = 10;
-        // return bcrypt.hashSync(password, saltRounds);
+        // https://github.com/ranisalt/node-argon2/wiki/Options
+        try {
+            return argon2.hash(password, {
+                type: argon2.argon2id,
+                memoryCost: 19456, // 19 MiB
+                timeCost: 2, // 2 iterations
+                parallelism: 1, // 1 degree of parallelism
+            });
+        } catch(err) {  
+            LogService.log('error', `Error hashing password: ${err}`);
+        };
     }
 
     static authenticate(name, password) {
         const dbConnection = new DBConnection().getConnection();
-        let hPass = UserModel.hashPassword(password);
-        const stmt = dbConnection.prepare('SELECT * FROM users WHERE name = ?');
-        const row = stmt.get(name);
-        if (row === undefined) {
-            return [false, null];
-        }
-        // insecure
-        return [true, UserFactory.create(row.id, row.name, row.isAdmin)];
-        // if (bcrypt.compareSync(password, row.password)) {
-        //     return [true, UserFactory.create(row.id, row.name, row.isAdmin)];
-        // }
-        // return [false, null];
+        return UserModel.hashPassword(password).then(hashedPassword => {
+            const stmt = dbConnection.prepare('SELECT * FROM users WHERE name = ?');
+            const row = stmt.get(name);
+            if (row === undefined) {
+                return [false, null];
+            }
+            // https://www.npmjs.com/package/argon2
+            return argon2.verify(row.password, password).then(isMatch => {
+                if (isMatch) {
+                    return [true, UserFactory.create(row.id, row.name, row.isAdmin)];
+                }
+                return [false, null];
+            }).catch(err => {
+                LogService.log('error', `Error verifying password: ${err}`);
+                return [false, null];
+            });
+        } ).catch(err => {
+            LogService.log('error', `Error hashing password: ${err}`);
+        });
     }
 }
 module.exports = UserModel;

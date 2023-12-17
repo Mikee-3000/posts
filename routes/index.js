@@ -1,10 +1,9 @@
 var express = require("express");
-var router = express.Router();
 const flash = require('connect-flash');
 const PostModel = require("../models/PostModel");
 const UserModel = require("../models/UserModel");
 const LogService = require("../helpers/LogService");
-
+var router = express.Router();
 
 // https://expressjs.com/en/guide/routing.html
 /* GET home page. */
@@ -20,11 +19,15 @@ router.get("/", function (req, res, next) {
 
 /* Register */
 router.get("/register", function (req, res, next) {
-    res.render("register", { title: "Posts" });
+    res.render("register", { title: "Posts"});
 });
 
 /* Register */
 router.post("/register", function (req, res, next) {
+    if (req.body.csrfToken !== req.session.csrfToken) {
+        LogService.log('error', `User ${req.body.uname} failed to register, invalid CSRF token.`);
+        return res.status(403).send('Invalid CSRF token');
+    }
     const username = req.body.uname;
     const password = req.body.psw;
     let [registered, user] = UserModel.register(username, password);
@@ -39,34 +42,42 @@ router.post("/register", function (req, res, next) {
 
 /* Login */
 router.get("/login", function (req, res, next) {
+    let csrfToken = res.locals.csrfToken;
     if (req.query.register === "true") {
         message = "Registration successful, please login with your new details.";
     } else {
         message = "";
     }
-    res.render("login", { title: "Posts", message: message });
+    res.render("login", { title: "Posts", message: message, csrfToken: csrfToken});
 });
 
 /* Login */
 router.post("/login", function (req, res, next) {
+    if (req.body.csrfToken !== req.session.csrfToken) {
+        LogService.log('error', `User ${req.body.uname} failed to log in, invalid CSRF token.`);
+        return res.status(403).send('Invalid CSRF token');
+    }
     const username = req.body.uname;
     const password = req.body.psw;
-    let [authenticated, user] = UserModel.authenticate(username, password);
-    if (authenticated) {
-        req.session.regenerate(function () {
-            req.session.isAuthenticated = true;
-            req.session.user = user;
-            req.session.success = "Authenticated as " + user.username + " You may now access posts";
+    UserModel.authenticate(username, password).then(([authenticated, user]) => {
+        if (authenticated) {
+            req.session.regenerate(function () {
+                req.session.isAuthenticated = true;
+                req.session.user = user;
+                req.session.success = "Authenticated as " + user.username + " You may now access posts";
 
-            LogService.log('info', `User ${user.username} logged in successfully.`);
-            res.json({ success: true});
-        });
-  } else {
-    LogService.log('error', `User ${username} failed to log in.`);
-    req.session.isAuthenticated = false;
-    req.session.error = 'Authentication failed, please check your username and password'
-    res.status(409).json({ error: "Authentication error.", message: "Authentication failed, please check your username and password."});
-  }
+                LogService.log('info', `User ${user.username} logged in successfully.`);
+                res.json({ success: true});
+            });
+        } else {
+            LogService.log('error', `User ${username} failed to log in.`);
+            req.session.isAuthenticated = false;
+            req.session.error = 'Authentication failed, please check your username and password'
+            res.status(409).json({ error: "Authentication error.", message: "Authentication failed, please check your username and password."});
+        }
+    }).catch(err => {
+        LogService.log('error', `Error authenticating user ${username}: ${err}`);
+    });
 });
 
 /* Posts */
@@ -91,10 +102,10 @@ router.get("/posts", function (req, res, next) {
             });
     });
     res.render("posts", {
-      title: "Posts",
-      posts: posts,
-      username: req.session.user.username,
-      userIsAdmin: req.session.user.isAdmin,
+        title: "Posts",
+        posts: posts,
+        username: req.session.user.username,
+        userIsAdmin: req.session.user.isAdmin,
     });
   });
 });

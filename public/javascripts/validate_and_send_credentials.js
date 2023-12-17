@@ -1,6 +1,7 @@
 function sendCreds(endpoint) {
     var uname = document.getElementById('uname').value;
     var psw = document.getElementById('psw').value;
+    var csrfToken = document.getElementById('csrfToken').value;
     var message_div = document.querySelector('.message');
     if (uname.length < 4) {
         message_div.textContent = 'Username must be at least 4 characters long.';
@@ -12,7 +13,7 @@ function sendCreds(endpoint) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({uname: uname, psw: psw})
+            body: JSON.stringify({uname: uname, psw: psw, csrfToken: csrfToken})
         })
         .then(function(response) {
             if (response.status === 409) {
@@ -21,8 +22,6 @@ function sendCreds(endpoint) {
 
                 });
             } else if (response.status === 200) {
-                // let msg = "";
-                console.log(200);
                 const data = response.json().then(data=> {
                     msg = data.message;
                     if (endpoint === 'login') {
